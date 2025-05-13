@@ -179,6 +179,7 @@ export function DivineInsightApp() {
             onRemoveAnnotation={removeAnnotation}
             onUpdateNote={updateNoteText}
             onNavigateToVerse={handleNavigateToVerse}
+            onFindCrossReferences={handleFindCrossReferences} // Pass the handler here
           />
 
       </div>

@@ -16,6 +16,8 @@ interface RightPanelManagerProps {
   onRemoveAnnotation: (annotationId: string) => void;
   onUpdateNote: (annotationId: string, newText: string) => void;
   onNavigateToVerse: (bookName: string, chapter: number, verseNumber: number) => void;
+  // Prop for SearchPanel and potentially others that might initiate cross-referencing
+  onFindCrossReferences: (verse: Verse) => void; 
 }
 
 export function RightPanelManager({
@@ -26,6 +28,7 @@ export function RightPanelManager({
   onRemoveAnnotation,
   onUpdateNote,
   onNavigateToVerse,
+  onFindCrossReferences, // Destructure the new prop
 }: RightPanelManagerProps) {
   if (!activePanelKey) {
     return null;
@@ -65,18 +68,7 @@ export function RightPanelManager({
             searchTerm={panelData?.searchTerm || ''}
             onNavigateToVerse={onNavigateToVerse}
             onClose={onClosePanel}
-            onFindCrossReferences={(verse) => {
-              // This is a bit of a prop drill, ideally, this comes from DivineInsightApp
-              // For now, we'll assume panelData can be set from here if needed, or this function
-              // should be passed down from here if needed, or this function
-              // should be passed down from DivineInsightApp.
-              // A better solution would be a global state or context for opening panels.
-              // For this exercise, we'll re-route through onNavigateToVerse (which SearchPanel has)
-              // and make DivineInsightApp handle it. Or, add a new prop specific for this.
-              // Let's modify SearchPanel to call a specific prop from DivineInsightApp.
-              // This means RightPanelManager needs this prop too.
-              // This prop needs to be added, for now, we will rely on AiAnalysisPanel to handle it.
-            }}
+            onFindCrossReferences={onFindCrossReferences} // Pass the prop to SearchPanel
           />
         )}
         {activePanelKey === 'library' && (
