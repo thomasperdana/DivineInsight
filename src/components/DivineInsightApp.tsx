@@ -63,7 +63,7 @@ export function DivineInsightApp() {
     });
   }, []);
 
-  const openRightPanel = (key: ActivePanel, data: any = null) => {
+  const openRightPanel = (key: ActivePanel, data: any = {}) => {
     setActiveRightPanelKey(key);
     setRightPanelData(data);
     setIsRightPanelOpen(true);
@@ -84,13 +84,11 @@ export function DivineInsightApp() {
   }, []);
 
   const handleShowAnnotations = useCallback((type: 'bookmarks' | 'highlights' | 'notes') => {
-    // The AnnotationPanel itself has tabs, so we just open it.
-    // The specific type can be used to default the tab if needed in future.
-    openRightPanel('annotations');
+    openRightPanel('annotations', { defaultTab: type });
   }, []);
 
   const handleAnalyzePassage = useCallback((passageText: string, passageRef: string) => {
-    openRightPanel('ai', { passageText, passageRef });
+    openRightPanel('ai', { mode: 'passageSummary', passageText, passageRef });
   }, []);
 
   const handleAnalyzeVerses = useCallback((verses: Verse[], question?: string) => {
@@ -98,8 +96,13 @@ export function DivineInsightApp() {
       toast({ title: "No Verses Selected", description: "Please select one or more verses to analyze.", variant: "default" });
       return;
     }
-    openRightPanel('ai', { verses, question });
+    openRightPanel('ai', { mode: 'verseExplanation', verses, question });
   }, [toast]);
+
+  const handleFindCrossReferences = useCallback((verse: Verse) => {
+    openRightPanel('ai', { mode: 'crossReference', verseForCrossReference: verse });
+  }, []);
+
 
   const handleNavigateToVerse = useCallback((bookName: string, chapter: number, verseNum: number) => {
     setSelectedBookName(bookName);
@@ -110,9 +113,9 @@ export function DivineInsightApp() {
     if (verseToSelect) {
       setSelectedVerses([verseToSelect]);
     }
-    closeRightPanel(); // Close panel after navigation
-    // Optionally, scroll to verse if BibleDisplay supports it
-  }, [closeRightPanel]);
+    // Do not close panel, user might want to explore more from cross-references
+    // closeRightPanel(); 
+  }, []);
   
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
@@ -146,8 +149,8 @@ export function DivineInsightApp() {
              {/* Mobile sidebar trigger is in AppSidebar itself */}
              {/* Placeholder for mobile header content if needed */}
              <div/> {/* To keep space for mobile sidebar trigger */}
-             {activeRightPanelKey === null && (
-              <Button variant="ghost" size="icon" onClick={() => openRightPanel('annotations', null)}>
+             {activeRightPanelKey === null && ( // Only show if no panel is open
+              <Button variant="ghost" size="icon" onClick={() => openRightPanel('annotations', { defaultTab: 'notes' })}>
                 <PanelRightOpen className="w-5 h-5" />
                 <span className="sr-only">Open Annotations</span>
               </Button>
@@ -161,6 +164,7 @@ export function DivineInsightApp() {
             onVerseSelect={handleVerseSelect}
             onAnalyzePassage={handleAnalyzePassage}
             onAnalyzeVerses={handleAnalyzeVerses}
+            onFindCrossReferences={handleFindCrossReferences}
             onAddAnnotation={addAnnotation}
             onRemoveAnnotation={removeAnnotation}
             getAnnotationsForVerse={getAnnotationsForVerse}

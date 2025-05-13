@@ -17,6 +17,7 @@ interface BibleDisplayProps {
   onVerseSelect: (verse: Verse, isCtrlPressed: boolean) => void;
   onAnalyzePassage: (passageText: string, passageRef: string) => void;
   onAnalyzeVerses: (verses: Verse[], question?: string) => void;
+  onFindCrossReferences: (verse: Verse) => void;
   onAddAnnotation: (verse: Verse, type: Annotation['type'], noteText?: string, color?: string) => void;
   onRemoveAnnotation: (annotationId: string) => void;
   getAnnotationsForVerse: (verse: Verse) => Annotation[];
@@ -30,6 +31,7 @@ export function BibleDisplay({
   onVerseSelect,
   onAnalyzePassage,
   onAnalyzeVerses,
+  onFindCrossReferences,
   onAddAnnotation,
   onRemoveAnnotation,
   getAnnotationsForVerse
@@ -95,6 +97,7 @@ export function BibleDisplay({
                 annotations={getAnnotationsForVerse(verse)}
                 onVerseSelect={onVerseSelect}
                 onAnalyze={onAnalyzeVerses}
+                onFindCrossReferences={onFindCrossReferences}
                 onAddAnnotation={onAddAnnotation}
                 onRemoveAnnotation={onRemoveAnnotation}
                 getAnnotationsForVerse={getAnnotationsForVerse}

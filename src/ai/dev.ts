@@ -4,3 +4,4 @@ config();
 import '@/ai/flows/passage-summary.ts';
 import '@/ai/flows/verse-explanation.ts';
 import '@/ai/flows/keyword-search.ts';
+import '@/ai/flows/cross-reference-flow.ts';

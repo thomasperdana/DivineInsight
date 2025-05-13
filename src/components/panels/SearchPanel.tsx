@@ -1,23 +1,26 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import type { KeywordSearchOutput } from '@/ai/flows/keyword-search';
+import type { KeywordSearchOutput, KeywordSearchInput } from '@/ai/flows/keyword-search';
 import { keywordSearch } from '@/ai/flows/keyword-search';
+import type { Verse } from '@/types';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Lightbulb } from 'lucide-react'; // Icon for search results/insights
+import { Lightbulb, Link2 } from 'lucide-react'; 
 import { useToast } from '@/hooks/use-toast';
 
 interface SearchPanelProps {
   searchTerm: string;
   onNavigateToVerse: (bookName: string, chapter: number, verse: number) => void;
   onClose: () => void;
+  // Prop added to handle initiating cross-reference search for a verse
+  onFindCrossReferences: (verse: Verse) => void; 
 }
 
-export function SearchPanel({ searchTerm, onNavigateToVerse, onClose }: SearchPanelProps) {
+export function SearchPanel({ searchTerm, onNavigateToVerse, onClose, onFindCrossReferences }: SearchPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResult, setSearchResult] = useState<KeywordSearchOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +48,17 @@ export function SearchPanel({ searchTerm, onNavigateToVerse, onClose }: SearchPa
       performSearch(searchTerm);
     }
   }, [searchTerm, performSearch]);
+
+  const handleFindRefsClick = (verseData: KeywordSearchOutput['verses'][0]) => {
+    // Adapt KeywordSearchOutput verse structure to the app's Verse type
+    const verseForCrossRef: Verse = {
+      book_name: verseData.book,
+      chapter: verseData.chapter,
+      verse: verseData.verseNumber,
+      text: verseData.text,
+    };
+    onFindCrossReferences(verseForCrossRef);
+  };
 
   return (
     <Card className="h-full flex flex-col shadow-xl">
@@ -87,12 +101,23 @@ export function SearchPanel({ searchTerm, onNavigateToVerse, onClose }: SearchPa
                 <div className="space-y-3">
                   {searchResult.verses.map((verse, index) => (
                     <div key={index} className="p-3 border rounded-md hover:bg-muted/50 transition-colors">
-                      <button 
-                        onClick={() => onNavigateToVerse(verse.book, verse.chapter, verse.verseNumber)}
-                        className="font-medium text-sm text-primary hover:underline cursor-pointer text-left block mb-1"
-                      >
-                        {verse.book} {verse.chapter}:{verse.verseNumber}
-                      </button>
+                      <div className="flex justify-between items-center mb-1">
+                        <button 
+                          onClick={() => onNavigateToVerse(verse.book, verse.chapter, verse.verseNumber)}
+                          className="font-medium text-sm text-primary hover:underline cursor-pointer text-left"
+                        >
+                          {verse.book} {verse.chapter}:{verse.verseNumber}
+                        </button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleFindRefsClick(verse)}
+                          className="px-2 py-1 h-auto text-xs"
+                          title="Find Cross-References"
+                        >
+                          <Link2 className="w-3 h-3 mr-1" /> Refs
+                        </Button>
+                      </div>
                       <p className="text-xs text-foreground">{verse.text}</p>
                       <p className="text-xs text-muted-foreground mt-1">Relevance: {(verse.relevanceScore * 100).toFixed(0)}%</p>
                     </div>

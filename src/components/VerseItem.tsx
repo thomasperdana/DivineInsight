@@ -11,6 +11,7 @@ interface VerseItemProps {
   annotations: Annotation[];
   onVerseSelect: (verse: Verse, isCtrlPressed: boolean) => void;
   onAnalyze: (verses: Verse[], question?: string) => void;
+  onFindCrossReferences: (verse: Verse) => void;
   onAddAnnotation: (verse: Verse, type: Annotation['type'], noteText?: string, color?: string) => void;
   onRemoveAnnotation: (annotationId: string) => void;
   getAnnotationsForVerse: (verse: Verse) => Annotation[];
@@ -22,6 +23,7 @@ export function VerseItem({
   annotations,
   onVerseSelect,
   onAnalyze,
+  onFindCrossReferences,
   onAddAnnotation,
   onRemoveAnnotation,
   getAnnotationsForVerse
@@ -35,12 +37,9 @@ export function VerseItem({
   if (highlightAnnotation && highlightAnnotation.color) {
     verseStyle.backgroundColor = highlightAnnotation.color;
   }
-  // The if (isBookmarked) block that was here previously had no specific visual effect
-  // and was commented as "For now, relying on the AnnotationPanel to show bookmarks clearly".
-  // Moving declarations above their usage fixes the initialization error.
 
   const handleClick = (event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent click from bubbling to parent if wrapped
+    event.stopPropagation(); 
     onVerseSelect(verse, event.ctrlKey || event.metaKey);
   };
 
@@ -48,6 +47,7 @@ export function VerseItem({
     <VerseInteractionPopover 
       verse={verse} 
       onAnalyze={onAnalyze} 
+      onFindCrossReferences={onFindCrossReferences}
       onAddAnnotation={onAddAnnotation}
       getAnnotationsForVerse={getAnnotationsForVerse}
       onRemoveAnnotation={onRemoveAnnotation}
@@ -75,4 +75,3 @@ export function VerseItem({
     </VerseInteractionPopover>
   );
 }
-

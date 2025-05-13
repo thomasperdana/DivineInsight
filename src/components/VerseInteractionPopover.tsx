@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Pencil, Bookmark, Palette, MessageSquare } from 'lucide-react';
+import { Sparkles, Pencil, Bookmark, Palette, MessageSquare, Link2 } from 'lucide-react';
 import type { Verse, Annotation } from '@/types';
 import { Textarea } from './ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +12,7 @@ interface VerseInteractionPopoverProps {
   verse: Verse;
   children: React.ReactNode;
   onAnalyze: (verses: Verse[], question?: string) => void;
+  onFindCrossReferences: (verse: Verse) => void;
   onAddAnnotation: (verse: Verse, type: Annotation['type'], noteText?: string, color?: string) => void;
   getAnnotationsForVerse: (verse: Verse) => Annotation[];
   onRemoveAnnotation: (annotationId: string) => void;
@@ -30,6 +31,7 @@ export function VerseInteractionPopover({
   verse,
   children,
   onAnalyze,
+  onFindCrossReferences,
   onAddAnnotation,
   getAnnotationsForVerse,
   onRemoveAnnotation,
@@ -85,9 +87,12 @@ export function VerseInteractionPopover({
       <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
         {children}
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-2 space-y-2" onClick={(e) => e.stopPropagation()}>
+      <PopoverContent className="w-auto p-2 space-y-1" onClick={(e) => e.stopPropagation()}>
         <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => { onAnalyze([verse]); setPopoverOpen(false); }}>
           <Sparkles className="w-4 h-4 mr-2" /> Analyze Verse
+        </Button>
+        <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => { onFindCrossReferences(verse); setPopoverOpen(false); }}>
+          <Link2 className="w-4 h-4 mr-2" /> Find Cross-Refs
         </Button>
         <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleToggleBookmark}>
           <Bookmark className={`w-4 h-4 mr-2 ${isBookmarked ? 'fill-accent stroke-accent' : ''}`} /> 

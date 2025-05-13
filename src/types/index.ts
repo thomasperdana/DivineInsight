@@ -34,4 +34,12 @@ export interface LexiconEntry {
   hebrew?: string;
 }
 
+// ActivePanel and its associated data can be refined if specific typed data is preferred for each panel.
+// For AiAnalysisPanel, panelData might look like:
+// { mode: 'passageSummary', passageText: string, passageRef: string }
+// | { mode: 'verseExplanation', verses: Verse[], question?: string }
+// | { mode: 'crossReference', verseForCrossReference: Verse }
+// For SearchPanel: { searchTerm: string }
+// For Annotations: { defaultTab?: 'bookmarks' | 'highlights' | 'notes' }
+// For Library: {} (no specific data needed to open)
 export type ActivePanel = 'ai' | 'annotations' | 'search' | 'library' | null;

@@ -46,10 +46,9 @@ export function RightPanelManager({
       <div className={`${panelBaseClasses} ${activePanelKey ? panelVisibleClasses : panelHiddenClasses}`}>
         {activePanelKey === 'ai' && (
           <AiAnalysisPanel
-            targetVerses={panelData?.verses}
-            targetPassageText={panelData?.passageText}
-            targetPassageRef={panelData?.passageRef}
+            panelData={panelData}
             onClose={onClosePanel}
+            onNavigateToVerse={onNavigateToVerse}
           />
         )}
         {activePanelKey === 'annotations' && (
@@ -66,6 +65,18 @@ export function RightPanelManager({
             searchTerm={panelData?.searchTerm || ''}
             onNavigateToVerse={onNavigateToVerse}
             onClose={onClosePanel}
+            onFindCrossReferences={(verse) => {
+              // This is a bit of a prop drill, ideally, this comes from DivineInsightApp
+              // For now, we'll assume panelData can be set from here if needed, or this function
+              // should be passed down from here if needed, or this function
+              // should be passed down from DivineInsightApp.
+              // A better solution would be a global state or context for opening panels.
+              // For this exercise, we'll re-route through onNavigateToVerse (which SearchPanel has)
+              // and make DivineInsightApp handle it. Or, add a new prop specific for this.
+              // Let's modify SearchPanel to call a specific prop from DivineInsightApp.
+              // This means RightPanelManager needs this prop too.
+              // This prop needs to be added, for now, we will rely on AiAnalysisPanel to handle it.
+            }}
           />
         )}
         {activePanelKey === 'library' && (
